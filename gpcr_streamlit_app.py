@@ -84,8 +84,6 @@ if page == "Overview":
     st.header("Project Overview")
     st.markdown("**Title**")
     st.write("Functional Activity Prediction for Class A GPCR Ligands")
-    st.markdown("**Authors (alphabetical)**")
-    st.write("Sivanesan Dakshanamurthy, Sahith Mada, Joshua Mathew")
     st.markdown("**Abstract**")
     st.write(
         "This project builds machine learning models to classify GPCR ligands as agonist, antagonist, "
