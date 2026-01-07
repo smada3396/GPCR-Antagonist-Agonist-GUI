@@ -71,16 +71,16 @@ st.title("GPCR Functional Activity Studio")
 st.caption("Upload SMILES or paste one per line to preview the UI for agonist vs antagonist predictions.")
 
 with st.sidebar:
+    st.header("Navigation")
+    page = st.radio("Go to", ["Overview", "Predict", "Methods", "Results"], index=0)
+    st.markdown("---")
     st.header("Controls")
     st.text_input("Artifacts folder", value="artifacts", help="Disabled in UI-only mode")
     threshold = st.slider("Agonist threshold", min_value=0.0, max_value=1.0, value=0.5, step=0.01)
-    st.markdown("---")
     st.markdown("About: UI-only mode (model loading disabled).")
 
 
-tabs = st.tabs(["Overview", "Predict", "Methods", "Results"])
-
-with tabs[0]:
+if page == "Overview":
     st.header("Project Overview")
     st.markdown("**Title**")
     st.write("Functional Activity Prediction for Class A GPCR Ligands")
@@ -94,7 +94,7 @@ with tabs[0]:
     st.markdown("**Keywords**")
     st.write("GPCR, functional activity, ligand descriptors, receptor pocket, stacking ensemble")
 
-with tabs[1]:
+elif page == "Predict":
     st.header("Predict - submit molecules")
 
     col_a, col_b = st.columns([2, 1])
@@ -105,6 +105,14 @@ with tabs[1]:
         st.markdown("**Options**")
         show_raw = st.checkbox("Show raw probabilities", value=True)
         run_btn = st.button("Predict Activity", type="primary")
+
+    st.markdown("**Receptor Input**")
+    receptor_text = st.text_input("GPCR Class A receptor name (e.g., D2R)")
+    receptor_file = st.file_uploader("Or upload receptor features (CSV)", type=["csv"], accept_multiple_files=False)
+    if receptor_file is not None:
+        st.info("Receptor file received (UI-only mode; file not processed).")
+    elif receptor_text:
+        st.info(f"Using receptor: {receptor_text} (UI-only mode).")
 
     smiles_list: List[str] = []
     if uploaded is not None:
@@ -150,8 +158,7 @@ with tabs[1]:
 
     if not run_btn and smiles_list:
         st.info(f"Ready to predict {len(smiles_list)} ligand(s). Click 'Predict Activity' to run.")
-
-with tabs[2]:
+elif page == "Methods":
     st.header("Methods at a Glance")
     st.markdown("- Ligands curated for 69 human Class A GPCRs from ChEMBL")
     st.markdown("- RDKit and Mordred used for 2D/3D descriptors")
@@ -159,8 +166,7 @@ with tabs[2]:
     st.markdown("- Feature matrix combines ligand, receptor, and interaction terms")
     st.markdown("- Splits: random stratified, Bemis-Murcko scaffold, and LORO")
     st.markdown("- Models: Random Forest, XGBoost, LightGBM, and stacking ensemble")
-
-with tabs[3]:
+elif page == "Results":
     st.header("Results Highlights")
     st.markdown("**Random Stratified Split**")
     st.write("Macro F1 around 0.80-0.81 for base learners; AUC near 0.97.")
